@@ -232,16 +232,20 @@ async def at_bot_handle(event: GroupMessageEvent):
     await at_bot.finish(response)
 
 
+# TODO Not Working
 @random_reply.handle()
 async def random_reply_handle(event: GroupMessageEvent):
     skip: bool = False
     group_id: int = event.group_id
-    if plugin_config.chatgpt_enable_random_reply == "false":
+    if plugin_config.chatgpt_enable_random_reply == False:
         skip = True
-    elif str(group_id) not in plugin_config.chatgpt_random_reply_whitelist:
+        logger.debug("Random reply is disabled")
+    elif int(group_id) not in plugin_config.chatgpt_random_reply_whitelist:
         skip = True
+        logger.debug("Group not in whitelist")
     elif random.randint(0, 99) >= plugin_config.chatgpt_random_reply_percentage:
         skip = True
+        logger.debug("Random reply percentage not reached")
     response = await handle_message(event, append_prompt=True, skip=skip)
     await random_reply.finish(response)
 
@@ -254,7 +258,6 @@ async def clear_messages_handle(event: GroupMessageEvent):
         await clear_messages.finish("对话历史已清空！")
 
 
-# TODO Not Working
 @check_group_messages.handle()
 async def check_group_messages_handle(event: GroupMessageEvent):
     group_id: int = event.group_id

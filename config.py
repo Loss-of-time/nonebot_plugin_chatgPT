@@ -29,6 +29,6 @@ class Config(BaseModel):
     chatgpt_enable_random_reply: bool = False
     """Whether to enable random reply"""
 
-    chatgpt_random_reply_whitelist: list[str] = [""]
+    chatgpt_random_reply_whitelist: list[int] = []
 
     chatgpt_random_reply_percentage: int = 20
