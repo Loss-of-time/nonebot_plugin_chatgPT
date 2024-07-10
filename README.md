@@ -29,7 +29,7 @@ chatgpt_max_message_num: int = 8
 chatgpt_model: str = "gpt-4o"
 
 chatgpt_prompt: str = PROMPT
-"""The prompt of chatgpt"""
+"""The initial system prompt of chatgpt"""
 
 chatgpt_enable_random_reply: bool = False
 """Whether to enable random reply"""
