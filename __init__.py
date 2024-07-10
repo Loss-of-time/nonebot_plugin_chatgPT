@@ -38,7 +38,10 @@ __plugin_meta__ = PluginMetadata(
 # TODO 配置文件读取设置
 plugin_config = get_plugin_config(Config)
 
-logger.debug(f"Config: {plugin_config.model_dump()}")
+try:
+    logger.debug(f"Config: {plugin_config.model_dump()}")
+except AttributeError:
+    logger.debug(f"Config: {plugin_config.dict()}")
 
 model_used: Model = Model(plugin_config.chatgpt_model)  # 转换为枚举类型
 
