@@ -17,6 +17,8 @@ class Config(BaseModel):
     chatgpt_bot_id: int = 0
     """The qq id of bot"""
 
+    chatgpt_max_tokens: int = 300
+
     chatgpt_api_url: str = "https://api.openai.com/v1/"
 
     chatgpt_max_message_num: int = 8

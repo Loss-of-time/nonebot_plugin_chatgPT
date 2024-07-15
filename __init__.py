@@ -52,6 +52,7 @@ def call_api(model: Model, messages: List[dict]) -> str:
         messages,
         plugin_config.chatgpt_api_key,
         plugin_config.chatgpt_api_url,
+        plugin_config.chatgpt_max_tokens,
         logger,
     )
 
@@ -158,8 +159,6 @@ async def generate_message(
             if (card := id_to_card.get(at_qq, None)) != None:
                 text += f"@{card} "
             # logger.debug(f"at_qq: {at_qq}, card: {card}")
-
-    logger.debug(f"Text: {text}")
 
     content: List[dict] = []
     content.append({"type": "text", "text": text})

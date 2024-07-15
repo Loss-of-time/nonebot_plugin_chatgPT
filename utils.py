@@ -33,7 +33,7 @@ async def url_to_base64(url: str) -> str:
 
 
 async def basic_call_api(
-    model: Model, messages: List[dict], api_key: str, api_url: str, logger: "Logger"
+    model: Model, messages: List[dict], api_key: str, api_url: str, max_tokens: int,logger: "Logger"
 ) -> str:
     async with aiohttp.ClientSession() as session:
         headers = {
@@ -43,13 +43,15 @@ async def basic_call_api(
         data = {
             "model": model.value,
             "messages": messages,
+            "max_tokens": max_tokens,
         }
         async with session.post(
-            f"{api_url}/chat/completions", json=data, headers=headers
+            f"{api_url}/chat/completions", json=data, headers=headers, timeout=120
         ) as resp:
+            logger.debug(f"API response: {await resp.text()}")
             try:
                 response = await resp.json()
             except:
                 logger.error(f"API response: {await resp.text()}")
-            logger.debug(f"API response: {response}")
+            # logger.debug(f"API response: {response}")
             return response["choices"][0]["message"]["content"]
