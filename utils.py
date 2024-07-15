@@ -51,8 +51,6 @@ async def basic_call_api(
             # logger.debug(f"API response: {await resp.text()}")
             try:
                 response = await resp.json()
+                return response["choices"][0]["message"]["content"]
             except:
-                logger.error(f"API response: {await resp.text()}")
-            # logger.debug(f"API response: {response}")
-            logger.info(f"API response: {response}")
-            return response["choices"][0]["message"]["content"]
+                return f"API调用失败：{resp.status} {await resp.text()}"
