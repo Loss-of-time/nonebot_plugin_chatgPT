@@ -111,6 +111,10 @@ class GroupMessageHistory:
         else:
             messages.append({"role": Role.USER.value, "content": new_content})
 
+        # messages: first message must use the "user" role
+        if messages[-1]["role"] != Role.USER.value:
+            messages.append({"role": Role.USER.value, "content": []})
+
     def clear(self) -> None:
         self.messages = []
 
