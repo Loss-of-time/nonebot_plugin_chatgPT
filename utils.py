@@ -48,10 +48,11 @@ async def basic_call_api(
         async with session.post(
             f"{api_url}/chat/completions", json=data, headers=headers, timeout=120
         ) as resp:
-            logger.debug(f"API response: {await resp.text()}")
+            # logger.debug(f"API response: {await resp.text()}")
             try:
                 response = await resp.json()
             except:
                 logger.error(f"API response: {await resp.text()}")
             # logger.debug(f"API response: {response}")
+            logger.info(f"API response: {response}")
             return response["choices"][0]["message"]["content"]
