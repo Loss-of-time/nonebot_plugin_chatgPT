@@ -46,7 +46,7 @@ except AttributeError:
 model_used: Model = Model(plugin_config.chatgpt_model)  # 转换为枚举类型
 
 
-def call_api(model: Model, messages: List[dict]) -> str:
+def call_api(model: Model, messages: List[dict]) -> tuple[int, str]:
     return basic_call_api(
         model,
         messages,
@@ -184,6 +184,8 @@ async def generate_message(
 async def handle_message(
     event: GroupMessageEvent, append_prompt: bool = False, skip: bool = False
 ):
+
+    # 初始化
     group_id: int = event.group_id
     if group_id not in groups_message:
         groups_message[group_id] = GroupMessageHistory(
@@ -195,6 +197,7 @@ async def handle_message(
     card: str = event.sender.card  # 群名片
     role: Role = Role.USER
 
+    # 新消息处理
     logger.debug(f"User ID: {user_id}, Nickname: {nickname}, Card: {card}")
     if card == None or card == "":
         card = nickname
@@ -204,25 +207,34 @@ async def handle_message(
         skip = True
         role = Role.ASSISTANT
 
-    new_message = await generate_message(
+    new_messages = await generate_message(
         event.get_message(), prefix=f"{card}: ", role=role
     )
-    g_messages.append_message(new_message)
-    logger.debug(f"Length: {len(g_messages.get_messages())}")
+    g_messages.append_message(new_messages)
 
+    # logger.debug(f"Length: {len(g_messages.get_messages())}")
+
+    # API调用
     if skip:
         return
 
     if append_prompt:
-        new_message = [
+        new_messages = [
             await generate_message(plugin_config.chatgpt_prompt, role=Role.SYSTEM)
-        ]
-        new_message.extend(g_messages.get_merged_messages())
-        response = await call_api(model_used, new_message)
+        ].extend(g_messages.get_messages())
     else:
-        response = await call_api(model_used, g_messages.get_merged_messages())
+        new_messages = g_messages.get_merged_messages()
 
+    # 调用API
+    code, response = await call_api(model_used, new_messages)
+
+    # 拼接回复消息
     g_messages.append_message(await generate_message(response, role=Role.ASSISTANT))
+
+    if code == 1:
+        g_messages.clear()
+
+    logger.debug(f"要回复的消息: {response}")
     return response
 
 
@@ -269,7 +281,6 @@ async def check_group_messages_handle(event: GroupMessageEvent):
     group_id: int = event.group_id
     if group_id in groups_message:
         g_messages = groups_message[group_id]
-        response = g_messages.get_messages()
-        await check_group_messages.finish(str(response))
+        await check_group_messages.finish(str(g_messages))
     else:
         await check_group_messages.finish("当前群聊无消息记录！")

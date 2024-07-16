@@ -9,7 +9,9 @@
 
 ### 安装
 
-暂无
+pillow
+aiohttp
+
 
 ### 配置项
 
