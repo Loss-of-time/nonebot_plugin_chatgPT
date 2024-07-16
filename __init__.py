@@ -35,13 +35,7 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-# TODO 配置文件读取设置
 plugin_config = get_plugin_config(Config)
-
-try:
-    logger.debug(f"Config: {plugin_config.model_dump()}")
-except AttributeError:
-    logger.debug(f"Config: {plugin_config.dict()}")
 
 model_used: Model = Model(plugin_config.chatgpt_model)  # 转换为枚举类型
 
@@ -126,7 +120,6 @@ random_reply = on_message(priority=99, block=False)
 clear_messages = on_command("clr", priority=5, block=True)
 check_group_messages = on_command("cgm", priority=5, block=True)
 
-# TODO 本地文件存储
 groups_message: Dict[int, GroupMessageHistory] = {}
 id_to_card: dict[str, str] = {}
 
@@ -143,7 +136,6 @@ def clac_content_length(content: List[dict]) -> int:
     return length
 
 
-# TODO 连续多条User消息合并为一条User消息
 async def generate_message(
     message: OnebotMessage | str, prefix: str = "", role: Role = Role.USER
 ) -> dict:
@@ -221,9 +213,10 @@ async def handle_message(
     if append_prompt:
         new_messages = [
             await generate_message(plugin_config.chatgpt_prompt, role=Role.SYSTEM)
-        ].extend(g_messages.get_messages())
+        ]
+        new_messages.extend(g_messages.get_messages())
     else:
-        new_messages = g_messages.get_merged_messages()
+        new_messages = g_messages.get_messages()
 
     # 调用API
     code, response = await call_api(model_used, new_messages)
@@ -250,7 +243,6 @@ async def at_bot_handle(event: GroupMessageEvent):
     await at_bot.finish(response)
 
 
-# TODO Not Working
 @random_reply.handle()
 async def random_reply_handle(event: GroupMessageEvent):
     skip: bool = False
