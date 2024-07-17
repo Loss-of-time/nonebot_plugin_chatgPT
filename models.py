@@ -3,15 +3,18 @@
 from enum import Enum
 from typing import List, Dict
 
+
 class Role(Enum):
     ASSISTANT = "assistant"
     USER = "user"
     SYSTEM = "system"
 
+
 class Model(Enum):
     GPT_4O = "gpt-4o"
     CLAUDE = "claude-3-5-sonnet-20240620"
     GPT_4_ALL = "gpt-4-all"
+
 
 class GroupMessageHistory:
     def __init__(self, max_message_num: int):
@@ -61,6 +64,7 @@ class GroupMessageHistory:
                     result += "[图片]"
             result += "\n"
         return result
+
 
 groups_message: Dict[int, GroupMessageHistory] = {}
 id_to_card: dict[str, str] = {}
