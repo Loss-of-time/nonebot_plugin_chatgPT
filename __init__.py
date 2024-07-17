@@ -251,12 +251,13 @@ async def at_bot_handle(event: GroupMessageEvent):
     for resp in response.split("¦"):
         await at_bot.send(resp)
 
+
 @random_reply.handle()
 async def random_reply_handle(event: GroupMessageEvent):
     for segment in event.get_message():
         # 如果包含：暂不支持该消息类型
         if segment.type == "text":
-            text : str = segment.data.get("text", "")
+            text: str = segment.data.get("text", "")
             if text.find("暂不支持该消息类型") != -1:
                 logger.debug("暂不支持该消息类型")
                 return
@@ -274,8 +275,9 @@ async def random_reply_handle(event: GroupMessageEvent):
         logger.debug("Random reply percentage not reached")
     response = await handle_message(event, append_prompt=True, skip=skip)
     # await random_reply.finish(response)
-    for resp in response.split("¦"):
-        await at_bot.send(resp)
+    if skip == False:
+        for resp in response.split("¦"):
+            await at_bot.send(resp)
 
 
 @clear_messages.handle()
