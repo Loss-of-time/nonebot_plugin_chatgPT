@@ -1,28 +1,16 @@
-__author__ = "loss0fTime"
+# config.py
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import List
 
 class Config(BaseModel):
-    chatgpt_api_key: str
-    """The api key of chatgpt"""
-
-    chatgpt_bot_id: int = 0
-    """The qq id of bot"""
-
-    chatgpt_max_tokens: int = 300
-
-    chatgpt_api_url: str = "https://api.openai.com/v1/"
-
-    chatgpt_max_message_num: int = 8
-
-    chatgpt_model: str = "gpt-4o"
-
-    chatgpt_prompt: str = ""
-    """The prompt of chatgpt"""
-
-    chatgpt_enable_random_reply: bool = False
-    """Whether to enable random reply"""
-
-    chatgpt_random_reply_whitelist: list[int] = []
-
-    chatgpt_random_reply_percentage: int = 20
+    chatgpt_api_key: str = Field(..., description="The API key for ChatGPT")
+    chatgpt_bot_id: int = Field(0, description="The QQ ID of the bot")
+    chatgpt_max_tokens: int = Field(300, description="Maximum number of tokens for API response")
+    chatgpt_api_url: str = Field("https://api.openai.com/v1/", description="ChatGPT API URL")
+    chatgpt_max_message_num: int = Field(8, description="Maximum number of messages to keep in history")
+    chatgpt_model: str = Field("gpt-4o", description="ChatGPT model to use")
+    chatgpt_prompt: str = Field("", description="Default prompt for ChatGPT")
+    chatgpt_enable_random_reply: bool = Field(False, description="Enable random replies")
+    chatgpt_random_reply_whitelist: List[int] = Field(default_factory=list, description="Whitelist for random replies")
+    chatgpt_random_reply_percentage: int = Field(20, description="Percentage chance of random reply")
