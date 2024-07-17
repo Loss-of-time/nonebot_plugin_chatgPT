@@ -210,13 +210,17 @@ async def handle_message(
     if skip:
         return
 
+    if model_used != Model.CLAUDE:
+        messages = g_messages.get_messages()
+    else:
+        messages = g_messages.get_merged_messages()
     if append_prompt:
         new_messages = [
             await generate_message(plugin_config.chatgpt_prompt, role=Role.SYSTEM)
         ]
-        new_messages.extend(g_messages.get_messages())
+        new_messages.extend(messages)
     else:
-        new_messages = g_messages.get_messages()
+        new_messages = messages
 
     # 调用API
     code, response = await call_api(model_used, new_messages)
