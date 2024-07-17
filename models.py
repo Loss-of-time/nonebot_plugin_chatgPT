@@ -45,8 +45,8 @@ class GroupMessageHistory:
         else:
             messages.append({"role": Role.USER.value, "content": new_content})
 
-        if messages[1]["role"] != Role.USER.value:
-            messages = messages[0] + [{"role": Role.USER.value, "content": []}] + messages[1:]
+        if messages[0]["role"] != Role.USER.value:
+            messages = [{"role": Role.USER.value, "content": []}] + messages
 
     def __str__(self) -> str:
         result = ""
