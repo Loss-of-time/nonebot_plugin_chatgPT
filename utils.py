@@ -23,8 +23,8 @@ async def url_to_base64(
         async with session.get(url, headers=headers) as response:
             image_data = await response.read()
 
-    compressed_image_data = compress_image(image_data, max_size_kb, max_dimension)
-    return base64.b64encode(compressed_image_data).decode("utf-8")
+    # compressed_image_data = compress_image(image_data, max_size_kb, max_dimension)
+    return base64.b64encode(image_data).decode("utf-8")
 
 
 def compress_image(image_data: bytes, max_size_kb: int, max_dimension: int) -> bytes:
