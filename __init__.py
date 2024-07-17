@@ -175,7 +175,7 @@ async def generate_message(
 
 async def handle_message(
     event: GroupMessageEvent, append_prompt: bool = False, skip: bool = False
-):
+) -> str:
 
     # 初始化
     group_id: int = event.group_id
@@ -228,7 +228,7 @@ async def handle_message(
         g_messages.clear()
 
     logger.debug(f"要回复的消息: {response}")
-    return response
+    return str(response)
 
 
 @call_bot.handle()
