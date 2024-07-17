@@ -234,17 +234,29 @@ async def handle_message(
 @call_bot.handle()
 async def call_bot_handle(event: GroupMessageEvent):
     response = await handle_message(event, append_prompt=True)
-    await call_bot.finish(response)
+    # await call_bot.finish(response)
+    for resp in response.split("¦"):
+        await at_bot.send(resp)
 
 
 @at_bot.handle()
 async def at_bot_handle(event: GroupMessageEvent):
     response = await handle_message(event, append_prompt=True)
-    await at_bot.finish(response)
-
+    # await at_bot.finish(response)
+    # response以¦分割，多条发送
+    for resp in response.split("¦"):
+        await at_bot.send(resp)
 
 @random_reply.handle()
 async def random_reply_handle(event: GroupMessageEvent):
+    for segment in event.get_message():
+        # 如果包含：暂不支持该消息类型
+        if segment.type == "text":
+            text : str = segment.data.get("text", "")
+            if text.find("暂不支持该消息类型") != -1:
+                logger.debug("暂不支持该消息类型")
+                return
+
     skip: bool = False
     group_id: int = event.group_id
     if plugin_config.chatgpt_enable_random_reply == False:
@@ -257,7 +269,9 @@ async def random_reply_handle(event: GroupMessageEvent):
         skip = True
         logger.debug("Random reply percentage not reached")
     response = await handle_message(event, append_prompt=True, skip=skip)
-    await random_reply.finish(response)
+    # await random_reply.finish(response)
+    for resp in response.split("¦"):
+        await at_bot.send(resp)
 
 
 @clear_messages.handle()
