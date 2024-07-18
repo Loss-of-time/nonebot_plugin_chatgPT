@@ -33,23 +33,18 @@ class GroupMessageHistory:
         merged_messages = []
         for message in self.messages:
             if message["role"] == Role.USER.value:
-                self.combine_user_messages(merged_messages, message["content"])
+                if merged_messages and merged_messages[-1]["role"] == Role.USER.value:
+                    merged_messages[-1]["content"].extend(message["content"])
+                else:
+                    merged_messages.append(message)
             else:
                 merged_messages.append(message)
+        if merged_messages[0]["role"] != Role.USER.value:
+            merged_messages = [{"role": Role.USER.value, "content": []}] + merged_messages
         return merged_messages
 
     def clear(self) -> None:
         self.messages = []
-
-    @staticmethod
-    def combine_user_messages(messages: List[dict], new_content: List[dict]) -> None:
-        if messages and messages[-1]["role"] == Role.USER.value:
-            messages[-1]["content"].extend(new_content)
-        else:
-            messages.append({"role": Role.USER.value, "content": new_content})
-
-        if messages[0]["role"] != Role.USER.value:
-            messages = [{"role": Role.USER.value, "content": []}] + messages
 
     def __str__(self) -> str:
         result = ""
