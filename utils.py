@@ -79,6 +79,6 @@ async def call_api(
                     response = await resp.json()
                     return 0, response["choices"][0]["message"]["content"]
                 except:
-                    return 1, f"API调用失败：{resp.status} {await resp.text()}"
+                    return 1, f"API调用失败：{resp.status}"
         except Exception as e:
             return 1, f"API调用失败：{e}"
