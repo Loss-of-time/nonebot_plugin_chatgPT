@@ -17,6 +17,20 @@ class Model(Enum):
 
 
 class GroupMessageHistory:
+    # A message structure example (OpenAI format):
+    # {
+    #     "role": "user" or "assistant" or "system",
+    #     "content": [
+    #         {
+    #             "type": "text",
+    #             "text": "some text content"
+    #         },
+    #         {
+    #             "type": "image_url",
+    #             "url": "http://example.com/image.png"
+    #         }
+    #     ]
+    # }
     def __init__(self, max_message_num: int):
         self.max_message_num = max_message_num
         self.messages: List[dict] = []
@@ -24,6 +38,8 @@ class GroupMessageHistory:
     def append_message(self, message: dict) -> None:
         if len(self.messages) >= self.max_message_num:
             self.messages.pop(0)
+            while self.messages and self.messages[0]["role"] == Role.USER.value:
+                self.messages.pop(0)
         self.messages.append(message)
 
     def get_messages(self) -> List[dict]:
@@ -36,10 +52,10 @@ class GroupMessageHistory:
                 merged_messages.append(message)
             else:
                 merged_messages[-1]["content"].extend(message["content"])
-        
-        if merged_messages and merged_messages[0]["role"] != Role.USER.value:
-            merged_messages.insert(0, {"role": Role.USER.value, "content": []})
-        
+
+        # if merged_messages and merged_messages[0]["role"] != Role.USER.value:
+        #     merged_messages.insert(0, {"role": Role.USER.value, "content": []})
+
         return merged_messages
 
     def clear(self) -> None:
